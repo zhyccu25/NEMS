@@ -173,12 +173,12 @@
 !***  Print subversion version and other status information.
 !-----------------------------------------------------------------------
 !
-#if defined (SVN_INFO) && defined (CMP_YEAR) && defined (CMP_JD)
-      if (mype==0) call w3tagb('NEMS '//SVN_INFO,                       &
-                               CMP_YEAR, CMP_JD, 0000, 'NEMS')
-#else
-      if (mype==0) call w3tagb('nems     ',0000,0000,0000,'np23   ')
-#endif
+!#if defined (SVN_INFO) && defined (CMP_YEAR) && defined (CMP_JD)
+!      if (mype==0) call w3tagb('NEMS '//SVN_INFO,                       &
+!                               CMP_YEAR, CMP_JD, 0000, 'NEMS')
+!#else
+!      if (mype==0) call w3tagb('nems     ',0000,0000,0000,'np23   ')
+!#endif
 !
 !-----------------------------------------------------------------------
 !***  Start gathering resource usage information.
@@ -653,7 +653,7 @@
 !
 !-----------------------------------------------------------------------
 !
-      if(mype==0)call w3tage('nems     ')
+!      if(mype==0)call w3tage('nems     ')
 !
 !-----------------------------------------------------------------------
 !

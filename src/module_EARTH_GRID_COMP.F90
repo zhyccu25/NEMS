@@ -90,6 +90,18 @@
 #ifdef FRONT_POM
       use FRONT_POM,        only: POM_SS    => SetServices
 #endif
+#ifdef FRONT_ADCIRC
+      use FRONT_ADCIRC,     only: ADCIRC_SS  => SetServices
+#endif
+#ifdef FRONT_HWRFDATA
+      use FRONT_HWRFDATA,   only: HWRFDATA_SS  => SetServices
+#endif
+#ifdef FRONT_WW3DATA
+      use FRONT_WW3DATA,    only: WW3DATA_SS  => SetServices
+#endif
+#ifdef FRONT_ATMESH
+      use FRONT_ATMESH,     only: ATMESH_SS  => SetServices
+#endif
   ! - Handle build time ICE options:
 #ifdef FRONT_SICE
       use FRONT_SICE,       only: SICE_SS  => SetServices
@@ -148,6 +160,9 @@
 #endif
 #ifdef FRONT_GSDCHEM
       use FRONT_GSDCHEM,    only: GSDCHEM_SS  => SetServices
+#endif
+#ifdef FRONT_NWM
+      use FRONT_NWM,        only: NWM_SS  => SetServices
 #endif
   ! - Mediator
 #ifdef CMEPS
