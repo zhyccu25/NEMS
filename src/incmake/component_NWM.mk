@@ -15,7 +15,6 @@ build_NWM: $(nwm_mk)
 
 
 env_file=$(NWM_SRCDIR)/setEnvar.sh
-esmf_env=$(NWM_SRCDIR)/esmf-impi-env.sh
 comp_opt=3
 
 # HOW to source env here??
@@ -28,7 +27,7 @@ NWM_ALL_OPTS= \
 
 $(nwm_mk): configure $(CONFDIR)/configure.nems
 	@echo ""
-	+$(MODULE_LOGIC) ; cd $(NWM_SRCDIR) ; exec ./compile_nuopc_NoahMP.sh $(env_file) $(esmf_env) $(comp_opt)
+	+$(MODULE_LOGIC) ; cd $(NWM_SRCDIR) ; exec ./compile_nuopc_NoahMP.sh $(env_file) $(comp_opt)
 	+$(MODULE_LOGIC) ; cd $(NWM_SRCDIR)/CPL/NUOPC_cpl ; exec $(MAKE) -f Makefile nuopcinstall \
 	  $(NWM_ALL_OPTS) DESTDIR=/ "INSTDIR=$(NWM_BINDIR)" 
 	@echo ""

@@ -4,7 +4,7 @@ all_component_mk_files+=$(ww3_mk)
 
 # Location of source code and installation
 WW3_SRCDIR?=$(ROOTDIR)/WW3/model
-WW3_BINDIR?=$(ROOTDIR)/WW3/WW3_INSTALL
+WW3_BINDIR?=$(ROOTDIR)/WW3_INSTALL
 
 # Make sure the source directory exists and is non-empty
 $(call require_dir,$(WW3_SRCDIR),WW3 source directory)
@@ -37,7 +37,7 @@ WW3_ALL_OPTS= \
 $(ww3_mk): configure
 	+$(MODULE_LOGIC) ; set -x ; cd $(WW3_SRCDIR)/esmf       ; \
 	export $(WW3_ALL_OPTS)                                  ; \
-	exec $(MAKE) -j 1 WW3_COMP="$(WW3_CONFOPT)" ww3_nems
+	exec $(MAKE) -j 1 WW3_COMP="$(WW3_CONFOPT)" COMP_BINDIR="$(WW3_BINDIR)" ww3_nems
 	mkdir -p $(WW3_BINDIR)
 	cp $(WW3_SRCDIR)/nuopc.mk $(WW3_BINDIR)/.
 	test -d "$(WW3_BINDIR)"
