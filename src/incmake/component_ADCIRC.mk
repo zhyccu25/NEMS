@@ -12,7 +12,6 @@ ADCIRC_BINDIR?=$(ROOTDIR)/ADCIRC_INSTALL
 $(call require_dir,$(ADCIRC_SRCDIR),ADCIRC source directory)
 
 # ENV for ADCIRC - exchange with NEMS ENV
-esmf_env=$(ADCIRC_SRCDIR)/work/esmf-impi-env.sh   # this is same as configure.nems, should be removed!
 comp_option=intel                       
 
 ADCIRC_ALL_OPTS= \
@@ -28,8 +27,8 @@ build_ADCIRC: $(adcirc_mk)
 
 
 $(adcirc_mk): configure $(CONFDIR)/configure.nems   
-	+$(MODULE_LOGIC) ; cd $(ADCIRC_SRCDIR)/work; exec ./make_nuopc.sh $(esmf_env) $(comp_option) 
-	+$(MODULE_LOGIC) ; cd $(ADCIRC_SRCDIR)/cpl/nuopc ; exec $(MAKE) $(ADCIRC_ALL_OPTS) -f makefile.adc_cap.nuopc nuopcinstall \
+	+$(MODULE_LOGIC) ; cd $(ADCIRC_SRCDIR)/thirdparty/nuopc; exec ./make_nuopc.sh $(comp_option)
+	+$(MODULE_LOGIC) ; cd $(ADCIRC_SRCDIR)/thirdparty/nuopc ; exec $(MAKE) $(ADCIRC_ALL_OPTS) -f makefile.adc_cap.nuopc nuopcinstall \
           DESTDIR=/ "INSTDIR=$(ADCIRC_BINDIR)"
 	@echo ""
 	test -d "$(ADCIRC_BINDIR)"
@@ -46,10 +45,11 @@ clean_ADCIRC:
 	@echo ""
 
 distclean_ADCIRC: clean_ADCIRC
+	+cd $(ADCIRC_SRCDIR)/work ; exec $(MAKE) -k clobber
 	rm -rf $(ADCIRC_BINDIR)
 	@echo ""
 
 distclean_NUOPC:
-	+cd $(ADCIRC_SRCDIR)/cpl/nuopc ; exec rm -f *.o *.mod libadc_cap.a adcirc.mk
+	+cd $(ADCIRC_SRCDIR)/thirdparty/nuopc ; exec rm -f *.o *.mod libadc_cap.a adcirc.mk
 	rm -rf $(ADCIRC_BINDIR)
 	@echo ""
