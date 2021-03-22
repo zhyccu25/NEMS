@@ -1,3 +1,9 @@
+# Executables
+exe/*
+*.exe
+*.out
+*.app
+
 # Prerequisites
 *.d
 
@@ -26,17 +32,19 @@
 *.a
 *.lib
 
-# Executables
-exe/*
-*.exe
-*.out
-*.app
-
-# Compiled
+# Compiled Python files
 *.pyc
 __pycache__
+
+# intermediate build files
+src/MAIN_NEMS.tmp.f90
+src/conf/configure.nems.NUOPC
+src/conf/modules.nems.csh
+src/conf/modules.nems.sh
+src/conf/test-results.mk
 
 # Editor
 .idea/
 .vscode/
 .project
+
