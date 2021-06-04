@@ -62,6 +62,6 @@ distclean_SCHISM: clean_SCHISM
 	@echo ""
 
 distclean_NUOPC:
-	+cd $(SCHISM_SRCDIR)/../schism-esmf/src/schism ; exec rm -f *.o *.mod *.a schism.mk  # make clean/distclean here
+	+cd $(SCHISM_SRCDIR)/thirdparty/schism-esmf/src/schism ; exec rm -f *.o *.mod *.a schism.mk  # make clean/distclean here
 	rm -rf $(SCHISM_BINDIR)
 	@echo ""
