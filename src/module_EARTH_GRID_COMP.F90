@@ -3909,19 +3909,6 @@
               file=__FILE__, rcToReturn=rc)
             return  ! bail out
 #endif
-          elseif (trim(model) == "schism") then
-#ifdef FRONT_SCHISM
-            call NUOPC_DriverAddComp(driver, trim(prefix), SCHISM_SS, &
-              petList=petList, comp=comp, rc=rc)
-            if (ESMF_LogFoundError(rcToCheck=rc, msg=ESMF_LOGERR_PASSTHRU, &
-              line=__LINE__, file=trim(name)//":"//__FILE__)) return  !  bail out
-#else
-            write (msg, *) "Model '", trim(model), "' was requested, "// &
-              "but is not available in the executable!"
-            call ESMF_LogSetError(ESMF_RC_NOT_VALID, msg=msg, line=__LINE__, &
-              file=__FILE__, rcToReturn=rc)
-            return  ! bail out
-#endif
           elseif (trim(model) == "adcirc") then
 #ifdef FRONT_ADCIRC
             call NUOPC_DriverAddComp(driver, trim(prefix), ADCIRC_SS, &
