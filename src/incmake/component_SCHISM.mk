@@ -10,6 +10,18 @@ SCHISM_SRCDIR?=$(SCHISM_ROOTDIR)/src
 SCHISM_BLDDIR?=$(SCHISM_ROOTDIR)/build
 SCHISM_BINDIR?=$(ROOTDIR)/SCHISM_INSTALL
 
+# SCHISM needs the compilers for C, Fortran and CXX, the latter ones
+# are defined in ESMFMKFILE, the former is computed here (@todo test), by
+# trying mpicxx, mpiicpc and mpicpc as CXXCOMPILER
+include $(ESMFMKFILE)
+ESMF_CCOMPILER=$(subst mpicxx,mpicc,$(ESMF_CXXCOMPILER))
+ifeq ($(ESMF_CCOMPILER),$(ESMF_CXXCOMPILER))
+ESMF_CCOMPILER:=$(subst mpiicpc,mpiicc,$(ESMF_CXXCOMPILER))
+endif
+ifeq ($(ESMF_CCOMPILER),$(ESMF_CXXCOMPILER))
+ESMF_CCOMPILER:=$(subst mpicpc,mpicc,$(ESMF_CXXCOMPILER))
+endif
+
 # Location of the ESMF makefile fragment for this component:
 schism_mk = $(SCHISM_BINDIR)/schism.mk
 all_component_mk_files+=$(schism_mk)
@@ -28,19 +40,17 @@ SCHISM_ALL_OPTS= \
 
 # Rule for building this component:
 
-# These line(s) will go away - for reference only
-SCHISM_NETCDF=-DNetCDF_FORTRAN_DIR=/project/opt/software/netcdf/4.7.0/intel_2020.0 -DCMAKE_Fortran_COMPILER=mpiifort -DCMAKE_CXX_COMPILER=mpiicpc   -DNetCDF_C_DIR=`nc-config --prefix` -DCMAKE_C_COMPILER=mpiicc -DNetCDF_INCLUDE_DIR=/project/opt/software/netcdf/4.7.0/intel_2020.0/include
-
 build_SCHISM: $(schism_mk)
 
 $(schism_mk): configure $(CONFDIR)/configure.nems
    ### Configure CMake build for SCHISM
-	+$(MODULE_LOGIC); echo "SCHISM_SRCDIR = $(SCHISM_SRCDIR)"; exec cmake -S $(SCHISM_SRCDIR) -B $(SCHISM_ROOTDIR)/build -DCMAKE_VERBOSE_MAKEFILE=TRUE
+	+$(MODULE_LOGIC); echo "SCHISM_SRCDIR = $(SCHISM_SRCDIR)"; exec cmake -S $(SCHISM_SRCDIR) -B $(SCHISM_ROOTDIR)/build -DCMAKE_VERBOSE_MAKEFILE=TRUE \
+	 -DCMAKE_Fortran_COMPILER=$(ESMF_F90COMPILER) -DCMAKE_CXX_COMPILER=$(ESMF_CXXCOMPILER) -DCMAKE_C_COMPILER=$(ESMF_CCOMPILER)
    ### Compile the SCHISM components
 	+cd $(SCHISM_BLDDIR); exec $(MAKE) pschism
 #	cd $(SCHISM_BLDDIR); exec $(MAKE) install
-	make -C  $(SCHISM_ROOTDIR)/thirdparty/schism-esmf install-nuopc DESTDIR=$(SCHISM_BINDIR) SCHISM_BUILD_DIR=$(SCHISM_ROOTDIR)/build
-	#+$(MODULE_LOGIC); cd $(SCHISM_SRCDIR)/thirdparty/schism-esmf/src/schism; exec $(MAKE) $(SCHISM_ALL_OPTS) install-nuopc  \
+	make -C  $(SCHISM_ROOTDIR)/../schism-esmf install-nuopc DESTDIR=$(SCHISM_BINDIR) SCHISM_BUILD_DIR=$(SCHISM_ROOTDIR)/build
+	#+$(MODULE_LOGIC); cd $(SCHISM_SRCDIR)/../schism-esmf/src/schism; exec $(MAKE) $(SCHISM_ALL_OPTS) install-nuopc  \
         #  DESTDIR=/ "INSTDIR=$(SCHISM_BINDIR)"
 	@echo ""
 	test -d "$(SCHISM_BINDIR)"
