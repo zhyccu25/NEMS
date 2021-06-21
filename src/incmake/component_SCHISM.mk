@@ -1,7 +1,8 @@
 ########################################################################
 ### Panagiotis Velissariou <panagiotis.velissariou@noaa.gov> - 18/05/2021
+### Carsten Lemmen <carsten.lemmen@hereon.de> - 19/06/2021
 ###
-### Version: 1.0 (18/05/2021)
+### Version: 1.1 (19/06/2021)
 ########################################################################
 
 # Location of source code and installation
@@ -37,21 +38,20 @@ SCHISM_ALL_OPTS= \
   MACHINE_ID="$(MACHINE_ID)"
 
 ########################################################################
-
 # Rule for building this component:
 
 build_SCHISM: $(schism_mk)
 
 $(schism_mk): configure $(CONFDIR)/configure.nems
-   ### Configure CMake build for SCHISM
-	+$(MODULE_LOGIC); echo "SCHISM_SRCDIR = $(SCHISM_SRCDIR)"; exec cmake -S $(SCHISM_SRCDIR) -B $(SCHISM_ROOTDIR)/build -DCMAKE_VERBOSE_MAKEFILE=TRUE \
-	 -DCMAKE_Fortran_COMPILER=$(ESMF_F90COMPILER) -DCMAKE_CXX_COMPILER=$(ESMF_CXXCOMPILER) -DCMAKE_C_COMPILER=$(ESMF_CCOMPILER)
-   ### Compile the SCHISM components
+  ### Configure CMake build for SCHISM
+	+$(MODULE_LOGIC); echo "SCHISM_SRCDIR = $(SCHISM_SRCDIR)"; exec cmake -S $(SCHISM_SRCDIR) -B $(SCHISM_BLDDIR) -DCMAKE_VERBOSE_MAKEFILE=TRUE \ 
+	-DCMAKE_Fortran_COMPILER=$(ESMF_F90COMPILER) -DCMAKE_CXX_COMPILER=$(ESMF_CXXCOMPILER) -DCMAKE_C_COMPILER=$(ESMF_CCOMPILER)
+
+  ### Compile the SCHISM components
 	+cd $(SCHISM_BLDDIR); exec $(MAKE) pschism
-#	cd $(SCHISM_BLDDIR); exec $(MAKE) install
-	make -C  $(SCHISM_ROOTDIR)/../schism-esmf install-nuopc DESTDIR=$(SCHISM_BINDIR) SCHISM_BUILD_DIR=$(SCHISM_ROOTDIR)/build
-	#+$(MODULE_LOGIC); cd $(SCHISM_SRCDIR)/../schism-esmf/src/schism; exec $(MAKE) $(SCHISM_ALL_OPTS) install-nuopc  \
-        #  DESTDIR=/ "INSTDIR=$(SCHISM_BINDIR)"
+
+	### Compile the SCHISM cap
+	make -C  $(SCHISM_ROOTDIR)/thirdparty/schism-esmf install-nuopc DESTDIR=$(SCHISM_BINDIR) SCHISM_BUILD_DIR=$(SCHISM_BLDDIR)
 	@echo ""
 	test -d "$(SCHISM_BINDIR)"
 	@echo ""
