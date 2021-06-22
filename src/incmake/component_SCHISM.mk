@@ -11,6 +11,11 @@ SCHISM_SRCDIR?=$(SCHISM_ROOTDIR)/src
 SCHISM_BLDDIR?=$(SCHISM_ROOTDIR)/build
 SCHISM_BINDIR?=$(ROOTDIR)/SCHISM_INSTALL
 
+# Export destination and build directories for schism-esmf Makefile, which
+# expects DESTDIR and SCHISM_BUILD_DIR to be set
+export DESTDIR:=$(SCHISM_BINDIR)
+export SCHISM_BUILD_DIR:=$(SCHISM_BDLDIR)
+
 # SCHISM needs the compilers for C, Fortran and CXX, the latter ones
 # are defined in ESMFMKFILE, the former is computed here (@todo test), by
 # trying mpicxx, mpiicpc and mpicpc as CXXCOMPILER
@@ -44,14 +49,15 @@ build_SCHISM: $(schism_mk)
 
 $(schism_mk): configure $(CONFDIR)/configure.nems
   ### Configure CMake build for SCHISM
-	+$(MODULE_LOGIC); echo "SCHISM_SRCDIR = $(SCHISM_SRCDIR)"; exec cmake -S $(SCHISM_SRCDIR) -B $(SCHISM_BLDDIR) -DCMAKE_VERBOSE_MAKEFILE=TRUE \ 
+	+$(MODULE_LOGIC); echo "SCHISM_SRCDIR = $(SCHISM_SRCDIR)"; exec cmake -S $(SCHISM_SRCDIR) -B $(SCHISM_BLDDIR) -DCMAKE_VERBOSE_MAKEFILE=TRUE \
 	-DCMAKE_Fortran_COMPILER=$(ESMF_F90COMPILER) -DCMAKE_CXX_COMPILER=$(ESMF_CXXCOMPILER) -DCMAKE_C_COMPILER=$(ESMF_CCOMPILER)
 
   ### Compile the SCHISM components
 	+cd $(SCHISM_BLDDIR); exec $(MAKE) pschism
 
-	### Compile the SCHISM cap
-	make -C  $(SCHISM_ROOTDIR)/thirdparty/schism-esmf install-nuopc DESTDIR=$(SCHISM_BINDIR) SCHISM_BUILD_DIR=$(SCHISM_BLDDIR)
+	### Compile the SCHISM cap, this uses the DESTDIR and SCHISM_BUILD_DIR exported variables
+	make -C  $(SCHISM_ROOTDIR)/thirdparty/schism-esmf  DESTDIR=$(SCHISM_BINDIR) \
+	  SCHISM_BUILD_DIR=$(SCHISM_BLDDIR) install-nuopc
 	@echo ""
 	test -d "$(SCHISM_BINDIR)"
 	@echo ""
@@ -67,11 +73,11 @@ clean_SCHISM:
 #	@echo ""
 
 distclean_SCHISM: clean_SCHISM
-	+cd $(SCHISM_SRCDIR)/work ; exec $(MAKE) -k distclean
+	+cd $(SCHISM_BLDDIR) ; exec $(MAKE) -k distclean
 	rm -rf $(SCHISM_BINDIR)
 	@echo ""
 
 distclean_NUOPC:
-	+cd $(SCHISM_SRCDIR)/thirdparty/schism-esmf/src/schism ; exec rm -f *.o *.mod *.a schism.mk  # make clean/distclean here
+	exec $(MAKE) -C $(SCHISM_SRCDIR)/thirdparty/schism-esmf clean
 	rm -rf $(SCHISM_BINDIR)
 	@echo ""
