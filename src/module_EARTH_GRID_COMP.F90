@@ -102,6 +102,9 @@
 #ifdef FRONT_ATMESH
       use FRONT_ATMESH,     only: ATMESH_SS  => SetServices
 #endif
+#ifdef FRONT_PAHM
+      use FRONT_PAHM,   only: PAHM_SS  => SetServices
+#endif
   ! - Handle build time ICE options:
 #ifdef FRONT_SICE
       use FRONT_SICE,       only: SICE_SS  => SetServices
@@ -3935,6 +3938,19 @@
           elseif (trim(model) == "atmesh") then
 #ifdef FRONT_ATMESH
             call NUOPC_DriverAddComp(driver, trim(prefix), ATMESH_SS, &
+              petList=petList, comp=comp, rc=rc)
+            if (ESMF_LogFoundError(rcToCheck=rc, msg=ESMF_LOGERR_PASSTHRU, &
+              line=__LINE__, file=trim(name)//":"//__FILE__)) return  !  bail out
+#else
+            write (msg, *) "Model '", trim(model), "' was requested, "// &
+              "but is not available in the executable!"
+            call ESMF_LogSetError(ESMF_RC_NOT_VALID, msg=msg, line=__LINE__, &
+              file=__FILE__, rcToReturn=rc)
+            return  ! bail out
+#endif
+          elseif (trim(model) == "pahm") then
+#ifdef FRONT_PAHM
+            call NUOPC_DriverAddComp(driver, trim(prefix), PAHM_SS, &
               petList=petList, comp=comp, rc=rc)
             if (ESMF_LogFoundError(rcToCheck=rc, msg=ESMF_LOGERR_PASSTHRU, &
               line=__LINE__, file=trim(name)//":"//__FILE__)) return  !  bail out
