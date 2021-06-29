@@ -8,6 +8,7 @@ SHELL           = /bin/sh
 ################################################################################
 ## Include the common configuration parts
 include         $(TOP)/conf/configure.nems.NUOPC
+include $(ESMFMKFILE)
 
 ################################################################################
 ## Other settings
@@ -29,7 +30,7 @@ EXTLIBS_POST = $(NEMSIO_LIB)  \
                $(NETCDF_LIB)  \
                $(SYS_LIB)
 ###
-FC          = mpiifort -g -qopenmp -mkl=sequential -align array32byte -lmkl_intel_lp64 -lmkl_core -lmkl_sequential -lpthread -qopenmp -convert big_endian -assume byterecl -mkl=sequential
+FC          = $(ESMF_F90COMPILER) -g -qopenmp -mkl=sequential -align array32byte -lmkl_intel_lp64 -lmkl_core -lmkl_sequential -lpthread -qopenmp -convert big_endian -assume byterecl -mkl=sequential
 F77         = mpiifort -g -qopenmp -mkl=sequential -align array32byte -lmkl_intel_lp64 -lmkl_core -lmkl_sequential -lpthread -qopenmp -convert big_endian -assume byterecl -mkl=sequential
 FREE         = -free
 FIXED        = -fixed
