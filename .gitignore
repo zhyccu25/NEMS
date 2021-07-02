@@ -43,8 +43,12 @@ src/conf/modules.nems.csh
 src/conf/modules.nems.sh
 src/conf/test-results.mk
 
+# documentation
+/doc/html/
+/doc/webpage.tar.gz
+/doc/Doxyfile
+
 # Editor
 .idea/
 .vscode/
 .project
-
