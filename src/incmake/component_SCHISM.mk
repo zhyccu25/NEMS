@@ -7,7 +7,7 @@
 
 # Location of source code and installation
 SCHISM_ROOTDIR?=$(ROOTDIR)/SCHISM
-SCHISM_SRCDIR?=$(SCHISM_ROOTDIR)/src
+SCHISM_SRCDIR?=$(SCHISM_ROOTDIR)/schism/src
 SCHISM_BLDDIR?=$(SCHISM_ROOTDIR)/build
 SCHISM_BINDIR?=$(ROOTDIR)/SCHISM_INSTALL
 
@@ -56,7 +56,7 @@ $(schism_mk): configure $(CONFDIR)/configure.nems
 	+cd $(SCHISM_BLDDIR); exec $(MAKE) pschism
 
 	### Compile the SCHISM cap, this uses the DESTDIR and SCHISM_BUILD_DIR exported variables
-	make -C  $(SCHISM_ROOTDIR)/thirdparty/schism-esmf  DESTDIR=$(SCHISM_BINDIR) \
+	make -C  $(SCHISM_ROOTDIR) DESTDIR=$(SCHISM_BINDIR) \
 	  SCHISM_BUILD_DIR=$(SCHISM_BLDDIR) install-nuopc
 	@echo ""
 	test -d "$(SCHISM_BINDIR)"
