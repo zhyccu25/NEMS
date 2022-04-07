@@ -69,10 +69,12 @@ $(schism_mk): configure $(CONFDIR)/configure.nems
 # Rule for cleaning the SRCDIR and BINDIR:
 
 clean_SCHISM:
-#	+cd $(SCHISM_SRCDIR); exec $(MAKE) -f build/Makefile -k clean
-#	@echo ""
+	+cd $(SCHISM_ROOTDIR)/schism-esmf; exec $(MAKE) DESTDIR=$(SCHISM_BINDIR) SCHISM_BUILD_DIR=$(SCHISM_BLDDIR) -k clean
+	+cd $(SCHISM_BLDDIR) ; exec $(MAKE) -k clean
+	@echo ""
 
 distclean_SCHISM: clean_SCHISM
+	+cd $(SCHISM_ROOTDIR)/schism-esmf; exec $(MAKE) DESTDIR=$(SCHISM_BINDIR) SCHISM_BUILD_DIR=$(SCHISM_BLDDIR) -k distclean
 	+cd $(SCHISM_BLDDIR) ; exec $(MAKE) -k distclean
 	rm -rf $(SCHISM_BINDIR)
 	@echo ""
