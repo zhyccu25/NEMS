@@ -70,12 +70,16 @@ $(schism_mk): configure $(CONFDIR)/configure.nems
 
 clean_SCHISM:
 	+cd $(SCHISM_ROOTDIR)/schism-esmf; exec $(MAKE) DESTDIR=$(SCHISM_BINDIR) SCHISM_BUILD_DIR=$(SCHISM_BLDDIR) -k clean
+ifneq ($(wildcard $(SCHISM_BLDIR)/Makefile),)
 	+cd $(SCHISM_BLDDIR) ; exec $(MAKE) -k clean
+endif
 	@echo ""
 
 distclean_SCHISM: clean_SCHISM
 	+cd $(SCHISM_ROOTDIR)/schism-esmf; exec $(MAKE) DESTDIR=$(SCHISM_BINDIR) SCHISM_BUILD_DIR=$(SCHISM_BLDDIR) -k distclean
+ifneq ($(wildcard $(SCHISM_BLDIR)/Makefile),)
 	+cd $(SCHISM_BLDDIR) ; exec $(MAKE) -k distclean
+endif
 	rm -rf $(SCHISM_BINDIR)
 	@echo ""
 
