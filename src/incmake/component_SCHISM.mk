@@ -50,13 +50,13 @@ build_SCHISM: $(schism_mk)
 $(schism_mk): configure $(CONFDIR)/configure.nems
   ### Configure CMake build for SCHISM
 	+$(MODULE_LOGIC); echo "SCHISM_SRCDIR = $(SCHISM_SRCDIR)"; exec cmake -S $(SCHISM_SRCDIR) -B $(SCHISM_BLDDIR) -DCMAKE_VERBOSE_MAKEFILE=TRUE \
-	-DCMAKE_Fortran_COMPILER=$(ESMF_F90COMPILER) -DCMAKE_CXX_COMPILER=$(ESMF_CXXCOMPILER) -DCMAKE_C_COMPILER=$(ESMF_CCOMPILER) -DOLDIO=ON -DUSE_WW3=ON -DPREC_EVAP=1
+	-DCMAKE_Fortran_COMPILER=$(ESMF_F90COMPILER) -DCMAKE_CXX_COMPILER=$(ESMF_CXXCOMPILER) -DCMAKE_C_COMPILER=$(ESMF_CCOMPILER) -DOLDIO=ON -DUSE_WW3=ON -DPREC_EVAP=OFF
 
   ### Compile the SCHISM components
 	+cd $(SCHISM_BLDDIR); exec $(MAKE) pschism
 
 	### Compile the SCHISM cap, this uses the DESTDIR and SCHISM_BUILD_DIR exported variables
-	make -C  $(SCHISM_ROOTDIR) DESTDIR=$(SCHISM_BINDIR) \
+	make -C  $(SCHISM_ROOTDIR)/schism-esmf DESTDIR=$(SCHISM_BINDIR) \
 	  SCHISM_BUILD_DIR=$(SCHISM_BLDDIR) install-nuopc
 	@echo ""
 	test -d "$(SCHISM_BINDIR)"
@@ -69,11 +69,17 @@ $(schism_mk): configure $(CONFDIR)/configure.nems
 # Rule for cleaning the SRCDIR and BINDIR:
 
 clean_SCHISM:
-#	+cd $(SCHISM_SRCDIR); exec $(MAKE) -f build/Makefile -k clean
-#	@echo ""
+	+cd $(SCHISM_ROOTDIR)/schism-esmf; exec $(MAKE) DESTDIR=$(SCHISM_BINDIR) SCHISM_BUILD_DIR=$(SCHISM_BLDDIR) -k clean
+ifneq ($(wildcard $(SCHISM_BLDIR)/Makefile),)
+	+cd $(SCHISM_BLDDIR) ; exec $(MAKE) -k clean
+endif
+	@echo ""
 
 distclean_SCHISM: clean_SCHISM
+	+cd $(SCHISM_ROOTDIR)/schism-esmf; exec $(MAKE) DESTDIR=$(SCHISM_BINDIR) SCHISM_BUILD_DIR=$(SCHISM_BLDDIR) -k distclean
+ifneq ($(wildcard $(SCHISM_BLDIR)/Makefile),)
 	+cd $(SCHISM_BLDDIR) ; exec $(MAKE) -k distclean
+endif
 	rm -rf $(SCHISM_BINDIR)
 	@echo ""
 
