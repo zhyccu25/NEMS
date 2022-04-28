@@ -48,6 +48,9 @@ src/conf/modules.nems.csh
 src/conf/modules.nems.sh
 src/conf/test-results.mk
 
+# unknown
+metis
+
 # documentation
 /doc/html/
 /doc/webpage.tar.gz
