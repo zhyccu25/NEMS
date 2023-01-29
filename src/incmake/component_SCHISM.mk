@@ -15,6 +15,7 @@ SCHISM_BINDIR?=$(ROOTDIR)/SCHISM_INSTALL
 # expects DESTDIR and SCHISM_BUILD_DIR to be set
 export DESTDIR:=$(SCHISM_BINDIR)
 export SCHISM_BUILD_DIR:=$(SCHISM_BDLDIR)
+export SCHISM_NO_PARMETIS:=OFF
 
 # SCHISM needs the compilers for C, Fortran and CXX, the latter ones
 # are defined in ESMFMKFILE, the former is computed here (@todo test), by
@@ -50,7 +51,8 @@ build_SCHISM: $(schism_mk)
 $(schism_mk): configure $(CONFDIR)/configure.nems
   ### Configure CMake build for SCHISM
 	+$(MODULE_LOGIC); echo "SCHISM_SRCDIR = $(SCHISM_SRCDIR)"; exec cmake -S $(SCHISM_SRCDIR) -B $(SCHISM_BLDDIR) -DCMAKE_VERBOSE_MAKEFILE=TRUE \
-	-DCMAKE_Fortran_COMPILER=$(ESMF_F90COMPILER) -DCMAKE_CXX_COMPILER=$(ESMF_CXXCOMPILER) -DCMAKE_C_COMPILER=$(ESMF_CCOMPILER) -DOLDIO=ON -DUSE_WW3=ON -DPREC_EVAP=OFF
+	-DCMAKE_Fortran_COMPILER=$(ESMF_F90COMPILER) -DCMAKE_CXX_COMPILER=$(ESMF_CXXCOMPILER) -DCMAKE_C_COMPILER=$(ESMF_CCOMPILER) \
+        -DOLDIO=ON -DUSE_WW3=ON -DPREC_EVAP=OFF -DNO_PARMETIS=$(SCHISM_NO_PARMETIS)
 
   ### Compile the SCHISM components
 	+cd $(SCHISM_BLDDIR); exec $(MAKE) pschism
@@ -70,20 +72,16 @@ $(schism_mk): configure $(CONFDIR)/configure.nems
 
 clean_SCHISM:
 	+cd $(SCHISM_ROOTDIR)/schism-esmf; exec $(MAKE) DESTDIR=$(SCHISM_BINDIR) SCHISM_BUILD_DIR=$(SCHISM_BLDDIR) -k clean
-ifneq ($(wildcard $(SCHISM_BLDIR)/Makefile),)
+ifneq ($(wildcard $(SCHISM_BLDDIR)/Makefile),)
 	+cd $(SCHISM_BLDDIR) ; exec $(MAKE) -k clean
 endif
 	@echo ""
 
 distclean_SCHISM: clean_SCHISM
 	+cd $(SCHISM_ROOTDIR)/schism-esmf; exec $(MAKE) DESTDIR=$(SCHISM_BINDIR) SCHISM_BUILD_DIR=$(SCHISM_BLDDIR) -k distclean
-ifneq ($(wildcard $(SCHISM_BLDIR)/Makefile),)
-	+cd $(SCHISM_BLDDIR) ; exec $(MAKE) -k distclean
-endif
-	rm -rf $(SCHISM_BINDIR)
+	rm -rf $(SCHISM_BLDDIR) $(SCHISM_BINDIR)
 	@echo ""
 
 distclean_NUOPC:
-	exec $(MAKE) -C $(SCHISM_SRCDIR)/thirdparty/schism-esmf clean
-	rm -rf $(SCHISM_BINDIR)
+	+cd $(SCHISM_ROOTDIR)/schism-esmf; exec $(MAKE) DESTDIR=$(SCHISM_BINDIR) SCHISM_BUILD_DIR=$(SCHISM_BLDDIR) -k distclean
 	@echo ""
