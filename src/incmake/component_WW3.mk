@@ -5,6 +5,7 @@ all_component_mk_files+=$(ww3_mk)
 # Location of source code and installation
 WW3_SRCDIR?=$(ROOTDIR)/WW3/model
 WW3_BINDIR?=$(ROOTDIR)/WW3_INSTALL
+WW3_ENVFIL?=$(WW3_SRCDIR)/bin/wwatch3.env
 
 # Make sure the source directory exists and is non-empty
 $(call require_dir,$(WW3_SRCDIR),WW3 source directory)
@@ -38,7 +39,19 @@ WW3_ALL_OPTS= \
 
 $(ww3_mk): configure
 	+$(MODULE_LOGIC) ; set -x ; cd $(WW3_SRCDIR)/esmf       ; \
-	export $(WW3_ALL_OPTS)                                  ; \
+	export $(WW3_ALL_OPTS); export WWATCH3_ENV=$(WW3_ENVFIL) ; \
+	echo "#"                                                       > $(WW3_ENVFIL) ; \
+	echo "# Environment variables for wavewatch III (CoastalApp)" >> $(WW3_ENVFIL) ; \
+	echo "# ----------------------------------------------------" >> $(WW3_ENVFIL) ; \
+	echo "#"                                                      >> $(WW3_ENVFIL) ; \
+	echo ""                                                       >> $(WW3_ENVFIL) ; \
+	echo "WWATCH3_LPR"                                            >> $(WW3_ENVFIL) ; \
+	echo "WWATCH3_F90      $(F90)"                                >> $(WW3_ENVFIL) ; \
+	echo "WWATCH3_CC       $(CC)"                                 >> $(WW3_ENVFIL) ; \
+	echo "WWATCH3_DIR      $(WW3_SRCDIR)"                         >> $(WW3_ENVFIL) ; \
+	echo "WWATCH3_TMP      $(WW3_SRCDIR)/tmp"                     >> $(WW3_ENVFIL) ; \
+	echo "WWATCH3_SOURCE   yes"                                   >> $(WW3_ENVFIL) ; \
+	echo "WWATCH3_LIST     yes"                                   >> $(WW3_ENVFIL) ; \
 	exec $(MAKE) -j 1 WW3_COMP="$(WW3_CONFOPT)" COMP_BINDIR="$(WW3_BINDIR)" WW3_F90="$(F90)" WW3_CC="$(CC)" ww3_nems
 	mkdir -p $(WW3_BINDIR)
 	cp $(WW3_SRCDIR)/nuopc.mk $(WW3_BINDIR)/.
