@@ -32,12 +32,14 @@ endif
 WW3_ALL_OPTS= \
   COMP_SRCDIR="$(WW3_SRCDIR)" \
   COMP_BINDIR="$(WW3_BINDIR)" \
-  WW3_COMP="$(WW3_CONFOPT)"
+  WW3_COMP="$(WW3_CONFOPT)" \
+  WW3_F90="$(F90)" \
+  WW3_CC="$(CC)"
 
 $(ww3_mk): configure
 	+$(MODULE_LOGIC) ; set -x ; cd $(WW3_SRCDIR)/esmf       ; \
 	export $(WW3_ALL_OPTS)                                  ; \
-	exec $(MAKE) -j 1 WW3_COMP="$(WW3_CONFOPT)" COMP_BINDIR="$(WW3_BINDIR)" ww3_nems
+	exec $(MAKE) -j 1 WW3_COMP="$(WW3_CONFOPT)" COMP_BINDIR="$(WW3_BINDIR)" WW3_F90="$(F90)" WW3_CC="$(CC)" ww3_nems
 	mkdir -p $(WW3_BINDIR)
 	cp $(WW3_SRCDIR)/nuopc.mk $(WW3_BINDIR)/.
 	test -d "$(WW3_BINDIR)"
