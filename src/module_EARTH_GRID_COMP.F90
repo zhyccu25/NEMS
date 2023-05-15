@@ -90,11 +90,17 @@
 #ifdef FRONT_POM
       use FRONT_POM,        only: POM_SS    => SetServices
 #endif
-#ifdef FRONT_SCHISM
-      use FRONT_SCHISM,     only: SCHISM_SS  => SetServices
-#endif
 #ifdef FRONT_ADCIRC
       use FRONT_ADCIRC,     only: ADCIRC_SS  => SetServices
+#endif
+#ifdef FRONT_FVCOM
+      use FRONT_FVCOM,     only: FVCOM_SS  => SetServices
+!PV: NOT HERE      use FVCOM_CAP,        only: FVCOMSS => SetServices
+!PV: NOT HERE      use FVCOM_CAP,        only: fvcom_name
+!PV: NOT HERE      use mod_driver,       only: fvcom_pet_num
+#endif
+#ifdef FRONT_SCHISM
+      use FRONT_SCHISM,     only: SCHISM_SS  => SetServices
 #endif
 #ifdef FRONT_HWRFDATA
       use FRONT_HWRFDATA,   only: HWRFDATA_SS  => SetServices
@@ -3346,6 +3352,49 @@
           return  ! bail out
       endif
 
+! BEG:: Do we actually need these? Panagiotis Velissariou 05/12/2023
+!JQI20211004
+      ! Fields from WW3 to FVCOM
+
+      if (.not.NUOPC_FieldDictionaryHasEntry( &
+        "significant_wave_height")) then
+        call NUOPC_FieldDictionaryAddEntry( &
+          standardName="significant_wave_height", &
+          canonicalUnits="m", &
+          rc=rc)
+        if (ESMF_LogFoundError(rcToCheck=rc, msg=ESMF_LOGERR_PASSTHRU, &
+          line=__LINE__, &
+          file=__FILE__)) &
+          return  ! bail out
+      endif
+
+      if (.not.NUOPC_FieldDictionaryHasEntry( &
+        "average_wave_length")) then
+        call NUOPC_FieldDictionaryAddEntry( &
+          standardName="average_wave_length", &
+          canonicalUnits="m", &
+          rc=rc)
+        if (ESMF_LogFoundError(rcToCheck=rc, msg=ESMF_LOGERR_PASSTHRU, &
+          line=__LINE__, &
+          file=__FILE__)) &
+          return  ! bail out
+      endif
+
+      if (.not.NUOPC_FieldDictionaryHasEntry( &
+        "average_wave_direction")) then
+        call NUOPC_FieldDictionaryAddEntry( &
+          standardName="average_wave_direction", &
+          canonicalUnits="degree", &
+          rc=rc)
+        if (ESMF_LogFoundError(rcToCheck=rc, msg=ESMF_LOGERR_PASSTHRU, &
+          line=__LINE__, &
+          file=__FILE__)) &
+          return  ! bail out
+      endif
+
+!JQI20211004
+! END:: Do we actually need these? Panagiotis Velissariou 05/12/2023
+
       ! Dummy fields
 
       if (.not. NUOPC_FieldDictionaryHasEntry( &
@@ -3955,9 +4004,9 @@
               file=__FILE__, rcToReturn=rc)
             return  ! bail out
 #endif
-          elseif (trim(model) == "schism") then
-#ifdef FRONT_SCHISM
-            call NUOPC_DriverAddComp(driver, trim(prefix), SCHISM_SS, &
+          elseif (trim(model) == "adcirc") then
+#ifdef FRONT_ADCIRC
+            call NUOPC_DriverAddComp(driver, trim(prefix), ADCIRC_SS, &
               petList=petList, comp=comp, rc=rc)
             if (ESMF_LogFoundError(rcToCheck=rc, msg=ESMF_LOGERR_PASSTHRU, &
               line=__LINE__, file=trim(name)//":"//__FILE__)) return  !  bail out
@@ -3968,9 +4017,30 @@
               file=__FILE__, rcToReturn=rc)
             return  ! bail out
 #endif
-          elseif (trim(model) == "adcirc") then
-#ifdef FRONT_ADCIRC
-            call NUOPC_DriverAddComp(driver, trim(prefix), ADCIRC_SS, &
+          elseif (trim(model) == "fvcom") then
+#ifdef FRONT_FVCOM
+            call NUOPC_DriverAddComp(driver, trim(prefix), FVCOM_SS, &
+              petList=petList, comp=comp, rc=rc)
+            if (ESMF_LogFoundError(rcToCheck=rc,msg=ESMF_LOGERR_PASSTHRU, &
+              line=__LINE__, file=trim(name)//":"//__FILE__)) return  !bail out
+
+!PV: NOT HERE?            call ESMF_ConfigGetAttribute(config, fvcom_name, &
+!PV: NOT HERE?                label="fvcom_name:",default=' ', rc=rc)
+!PV: NOT HERE?            if (ESMF_LogFoundError(rcToCheck=rc, msg=ESMF_LOGERR_PASSTHRU, &
+!PV: NOT HERE?              line=__LINE__, file=trim(name)//":"//__FILE__)) return !bail out 
+
+!PV: NOT HERE?            fvcom_pet_num = size(petList)
+!PV: NOT HERE?            print*,'FVCOM pet = ', fvcom_pet_num
+#else
+            write (msg, *) "Model '", trim(model), "' was requested, "// &
+              "but is not available in the executable!"
+            call ESMF_LogSetError(ESMF_RC_NOT_VALID, msg=msg,line=__LINE__, &
+              file=__FILE__, rcToReturn=rc)
+            return  ! bail out
+#endif
+          elseif (trim(model) == "schism") then
+#ifdef FRONT_SCHISM
+            call NUOPC_DriverAddComp(driver, trim(prefix), SCHISM_SS, &
               petList=petList, comp=comp, rc=rc)
             if (ESMF_LogFoundError(rcToCheck=rc, msg=ESMF_LOGERR_PASSTHRU, &
               line=__LINE__, file=trim(name)//":"//__FILE__)) return  !  bail out
