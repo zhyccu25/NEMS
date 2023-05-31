@@ -97,7 +97,7 @@
 !      use FRONT_FVCOM,     only: FVCOM_SS  => SetServices
       use FVCOM_CAP,       only: FVCOM_SS => SetServices
 !PV: NOT HERE      use FVCOM_CAP,        only: FVCOMSS => SetServices
-!PV: NOT HERE      use FVCOM_CAP,        only: fvcom_name
+      use FVCOM_CAP,        only: fvcom_name
 !PV: NOT HERE      use mod_driver,       only: fvcom_pet_num
 #endif
 #ifdef FRONT_SCHISM
@@ -4025,10 +4025,10 @@
             if (ESMF_LogFoundError(rcToCheck=rc,msg=ESMF_LOGERR_PASSTHRU, &
               line=__LINE__, file=trim(name)//":"//__FILE__)) return  !bail out
 
-!PV: NOT HERE?            call ESMF_ConfigGetAttribute(config, fvcom_name, &
-!PV: NOT HERE?                label="fvcom_name:",default=' ', rc=rc)
-!PV: NOT HERE?            if (ESMF_LogFoundError(rcToCheck=rc, msg=ESMF_LOGERR_PASSTHRU, &
-!PV: NOT HERE?              line=__LINE__, file=trim(name)//":"//__FILE__)) return !bail out 
+            call ESMF_ConfigGetAttribute(config, fvcom_name, &
+                label="fvcom_name:",default=' ', rc=rc)
+            if (ESMF_LogFoundError(rcToCheck=rc, msg=ESMF_LOGERR_PASSTHRU, &
+              line=__LINE__, file=trim(name)//":"//__FILE__)) return !bail out 
 
 !PV: NOT HERE?            fvcom_pet_num = size(petList)
 !PV: NOT HERE?            print*,'FVCOM pet = ', fvcom_pet_num
