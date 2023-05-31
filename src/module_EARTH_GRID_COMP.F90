@@ -94,7 +94,8 @@
       use FRONT_ADCIRC,     only: ADCIRC_SS  => SetServices
 #endif
 #ifdef FRONT_FVCOM
-      use FRONT_FVCOM,     only: FVCOM_SS  => SetServices
+!      use FRONT_FVCOM,     only: FVCOM_SS  => SetServices
+      use FVCOM_CAP,       only: FVCOM_SS => SetServices
 !PV: NOT HERE      use FVCOM_CAP,        only: FVCOMSS => SetServices
 !PV: NOT HERE      use FVCOM_CAP,        only: fvcom_name
 !PV: NOT HERE      use mod_driver,       only: fvcom_pet_num
