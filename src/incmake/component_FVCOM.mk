@@ -99,7 +99,7 @@ build_FVCOM: $(fvcom_mk)
 
 $(fvcom_mk): configure
 	+$(MODULE_LOGIC) ; cd $(FVCOM_SRCDIR)/src ; \
-	                   exec $(MAKE) $(FVCOM_OPTS) FLAG_81=-DNUOPC libfvcom
+	                   exec $(MAKE) $(FVCOM_OPTS) FLAG_81=-DFVCOM_COUPLED libfvcom
 	+$(MODULE_LOGIC) ; cd $(FVCOM_NUOPC_SRCDIR) ; \
 	                   exec $(MAKE) $(FVCOM_ALL_OPTS)  \
 	                   DESTDIR=/ "INSTDIR=$(FVCOM_BINDIR)" nuopcinstall
